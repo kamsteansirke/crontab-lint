@@ -44,3 +44,19 @@ def format_result(result: LintResult, *, color: bool = True) -> str:
 def format_results(results: List[LintResult], *, color: bool = True) -> str:
     """Format multiple LintResults separated by blank lines."""
     return "\n\n".join(format_result(r, color=color) for r in results)
+
+
+def format_summary(results: List[LintResult], *, color: bool = True) -> str:
+    """Format a summary line showing how many expressions passed and failed."""
+    total = len(results)
+    valid = sum(1 for r in results if r.valid)
+    invalid = total - valid
+
+    if color:
+        valid_str = f"\033[92m{valid} valid\033[0m"
+        invalid_str = f"\033[91m{invalid} invalid\033[0m"
+    else:
+        valid_str = f"{valid} valid"
+        invalid_str = f"{invalid} invalid"
+
+    return f"Summary: {total} expression(s) checked — {valid_str}, {invalid_str}"
