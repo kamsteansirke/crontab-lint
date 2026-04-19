@@ -26,6 +26,18 @@ class CronDiff:
     def has_changes(self) -> bool:
         return bool(self.added or self.removed or self.changed)
 
+    @property
+    def summary(self) -> str:
+        """Return a short human-readable summary of the diff counts."""
+        parts = []
+        if self.added:
+            parts.append(f"{len(self.added)} added")
+        if self.removed:
+            parts.append(f"{len(self.removed)} removed")
+        if self.changed:
+            parts.append(f"{len(self.changed)} changed")
+        return ", ".join(parts) if parts else "no changes"
+
 
 def _safe_explain(expr: str) -> str:
     try:
