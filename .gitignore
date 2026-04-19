@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+*.swp
+.cache/
+*.egg-info/
+*.egg
+.env
+env/
+.coverage
+.mypy_cache/
+Thumbs.db
+.eggs/
+Desktop.ini
+venv/
