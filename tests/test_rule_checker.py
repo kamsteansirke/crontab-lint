@@ -50,6 +50,12 @@ def test_check_expression_frequency_ok():
     assert result.passed
 
 
+def test_check_expression_frequency_exactly_at_limit():
+    """An expression at exactly the max_frequency_minutes boundary should pass."""
+    result = check_expression("*/5 * * * *", [FREQ_RULE])
+    assert result.passed
+
+
 def test_check_expression_parse_error():
     result = check_expression("not a cron", [EVERY_MINUTE_RULE])
     assert not result.passed
@@ -72,6 +78,12 @@ def test_check_many_returns_all_results():
     assert results[0].passed
     assert not results[1].passed
     assert not results[2].passed
+
+
+def test_check_many_empty_list():
+    """check_many with an empty list of expressions should return an empty list."""
+    results = check_many([], [EVERY_MINUTE_RULE])
+    assert results == []
 
 
 def test_estimate_frequency_wildcard():
