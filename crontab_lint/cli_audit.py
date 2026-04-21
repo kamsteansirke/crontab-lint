@@ -68,6 +68,15 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _load_audit_log(log_path: Path) -> AuditLog | None:
+    """Load an AuditLog from *log_path*, printing an error and returning None on failure."""
+    try:
+        return AuditLog(log_path)
+    except OSError as exc:
+        print(f"Error: could not open audit log '{log_path}': {exc}", file=sys.stderr)
+        return None
+
+
 def run_audit(argv: list[str] | None = None) -> int:
     """Run the audit CLI and return an exit code."""
     parser = build_parser()
@@ -78,7 +87,9 @@ def run_audit(argv: list[str] | None = None) -> int:
         return 0
 
     log_path = Path(args.file)
-    log = AuditLog(log_path)
+    log = _load_audit_log(log_path)
+    if log is None:
+        return 1
 
     if args.command == "list":
         entries = log.recent(limit=args.limit, action=args.action if args.action else None)
@@ -104,16 +115,5 @@ def run_audit(argv: list[str] | None = None) -> int:
                 return 0
         log.clear()
         print(f"Audit log cleared: {log_path}")
-        return 0
 
-    parser.print_help()
     return 0
-
-
-def main() -> None:
-    """Entry point for the audit CLI."""
-    sys.exit(run_audit())
-
-
-if __name__ == "__main__":
-    main()
