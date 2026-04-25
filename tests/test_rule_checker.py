@@ -71,6 +71,13 @@ def test_check_expression_multiple_rules():
     assert "min_5_minutes" in rule_names
 
 
+def test_check_expression_no_rules():
+    """Passing an empty rules list should always produce a passing result."""
+    result = check_expression("* * * * *", [])
+    assert result.passed
+    assert result.violations == []
+
+
 def test_check_many_returns_all_results():
     exprs = ["30 6 * * *", "* * * * *", "bad"]
     results = check_many(exprs, [EVERY_MINUTE_RULE])
@@ -84,6 +91,17 @@ def test_check_many_empty_list():
     """check_many with an empty list of expressions should return an empty list."""
     results = check_many([], [EVERY_MINUTE_RULE])
     assert results == []
+
+
+def test_check_many_preserves_order():
+    """Results from check_many must correspond to inputs in the same order."""
+    exprs = ["*/1 * * * *", "30 6 * * *", "*/3 * * * *", "0 0 * * *"]
+    results = check_many(exprs, [FREQ_RULE])
+    assert len(results) == 4
+    assert not results[0].passed  # every 1 min — violation
+    assert results[1].passed      # 06:30 daily — no frequency estimate, passes
+    assert not results[2].passed  # every 3 min — violation
+    assert results[3].passed      # midnight daily — no frequency estimate, passes
 
 
 def test_estimate_frequency_wildcard():
