@@ -82,3 +82,11 @@ def test_format_summary_counts():
     summary = format_summary(graph)
     assert "3 expression(s)" in summary
     assert "1 invalid" in summary
+
+
+def test_format_summary_no_invalid():
+    """Summary should not mention invalid expressions when all inputs are valid."""
+    graph = build_graph([("0 9 * * 1", "mon"), ("0 9 * * *", "daily")])
+    summary = format_summary(graph)
+    assert "2 expression(s)" in summary
+    assert "invalid" not in summary
