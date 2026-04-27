@@ -61,6 +61,20 @@ def format_summary(results: List[SimilarityResult]) -> str:
     return ", ".join(parts) + "."
 
 
+def format_errors(results: List[SimilarityResult]) -> str:
+    """Return a formatted list of all invalid results, or an empty string if none.
+
+    Useful for surfacing parse/validation errors separately from similarity output.
+    """
+    invalid = [r for r in results if not r.is_valid]
+    if not invalid:
+        return ""
+    lines = [f"{len(invalid)} error(s) encountered:"]
+    for r in invalid:
+        lines.append(f"  - '{r.expression_a}' vs '{r.expression_b}': {r.error}")
+    return "\n".join(lines)
+
+
 def _bar(score: float, width: int = 10) -> str:
     filled = round(score * width)
     return "[" + "#" * filled + "-" * (width - filled) + "]"
