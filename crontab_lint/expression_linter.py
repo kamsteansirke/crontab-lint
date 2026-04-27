@@ -42,6 +42,17 @@ class AggregateLintResult:
     def issue_count(self) -> int:
         return len(self.issues)
 
+    def issues_by_severity(self, severity: str) -> List[LintIssue]:
+        """Return all issues matching the given severity level.
+
+        Args:
+            severity: One of ``"error"``, ``"warning"``, or ``"info"``.
+
+        Returns:
+            A filtered list of :class:`LintIssue` objects.
+        """
+        return [i for i in self.issues if i.severity == severity]
+
 
 def lint(
     expression: str,
