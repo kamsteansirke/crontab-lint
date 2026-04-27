@@ -60,6 +60,8 @@ def next_run(expression: str, after: Optional[datetime] = None) -> datetime:
 
 def next_n_runs(expression: str, n: int = 5, after: Optional[datetime] = None) -> List[datetime]:
     """Return the next `n` datetimes a cron expression would fire."""
+    if n < 1:
+        raise ValueError(f"n must be a positive integer, got {n}")
     results: List[datetime] = []
     current = after
     for _ in range(n):
@@ -67,3 +69,18 @@ def next_n_runs(expression: str, n: int = 5, after: Optional[datetime] = None) -
         results.append(t)
         current = t
     return results
+
+
+def time_until_next_run(expression: str, after: Optional[datetime] = None) -> timedelta:
+    """Return the timedelta until the next time a cron expression fires.
+
+    Args:
+        expression: A cron expression string.
+        after: The reference datetime (defaults to now).
+
+    Returns:
+        A timedelta representing the time until the next scheduled run.
+    """
+    if after is None:
+        after = datetime.now()
+    return next_run(expression, after=after) - after
